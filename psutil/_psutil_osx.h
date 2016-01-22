@@ -4,6 +4,9 @@
  * found in the LICENSE file.
  */
 
+#ifndef _psutil_osx_h
+#define _psutil_osx_h
+
 #include <Python.h>
 
 // --- per-process functions
@@ -39,3 +42,5 @@ static PyObject* psutil_pids(PyObject* self, PyObject* args);
 static PyObject* psutil_swap_mem(PyObject* self, PyObject* args);
 static PyObject* psutil_users(PyObject* self, PyObject* args);
 static PyObject* psutil_virtual_mem(PyObject* self, PyObject* args);
+
+#endif

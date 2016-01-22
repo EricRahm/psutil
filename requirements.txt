@@ -1,0 +1,11 @@
+coverage
+flake8
+ipaddress
+ipdb
+mock==1.0.1
+nose
+pep8
+pyflakes
+sphinx
+sphinx-pypi-upload
+unittest2
