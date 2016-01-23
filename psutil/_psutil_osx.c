@@ -488,6 +488,7 @@ psutil_proc_memory_info(PyObject *self, PyObject *args) {
     int err;
     mach_port_t task = MACH_PORT_NULL;
     int64_t uss = 0;
+    long long uss_ll = 0;
 
     if (! PyArg_ParseTuple(args, "l", &pid))
         return NULL;
@@ -500,7 +501,16 @@ psutil_proc_memory_info(PyObject *self, PyObject *args) {
     // psutil_proc_pidinfo(pid, PROC_PIDREGIONINFO, &pri, sizeof(pri))
 
     err = task_for_pid(mach_task_self(), pid, &task);
-    moz_uss(task, &uss); 
+    if (err != KERN_SUCCESS) {
+        psutil_raise_ad_or_nsp(pid);
+        goto error;
+    }
+
+    moz_uss(task, &uss);
+    uss_ll = uss;
+
+    if (task != MACH_PORT_NULL)
+        mach_port_deallocate(mach_task_self(), task);
 
     return Py_BuildValue(
         "(KKkkK)",
@@ -508,8 +518,13 @@ psutil_proc_memory_info(PyObject *self, PyObject *args) {
         pti.pti_virtual_size,   // virtual memory size (vms)
         pti.pti_faults,         // number of page faults (pages)
         pti.pti_pageins,        // number of actual pageins (pages)
-        (long long)moz_uss      // unique memory size (uss)
+        uss_ll                  // unique memory size (uss)
     );
+
+error:
+    if (task != MACH_PORT_NULL)
+        mach_port_deallocate(mach_task_self(), task);
+    return NULL;
 }
 
 

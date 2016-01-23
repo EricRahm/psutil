@@ -7,6 +7,7 @@
 #ifndef _psutil_osx_uss_h
 #define _psutil_osx_uss_h
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <mach/port.h>
 
